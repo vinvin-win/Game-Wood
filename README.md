@@ -1,23 +1,22 @@
+La Game-Wood est une console portable Open-Source 
 
-La_Game-Wood_est_une_console_portable_Open-Source_
+C'est un projet qui a pour but de faire naître une nouvelle
+aire dans le monde du jeux vidéo rétro 
+Une aire où les jeux sont programmer par les joueurs 
 
-C'est_un_projet_qui_a_pour_but_de_faire_naître_une_nouvelle
-aire_dans_le_monde_du_jeux_vidéo_rétro_
-Une_aire_où_les_jeux_sont_programmer_par_les_joueurs_
+Cette premier version de la Game-Wood est basé sur un Atmega2560,
+qui exécute un programme est programmé par un Atmega368p 
 
-Cette_premier_version_de_la_Game-Wood_est_basé_sur_un_Atmega2560,
-qui_exécute_un_programme_est_programmé_par_un_Atmega368p_
+Le programme qui est dans l'Atmega368p est un dérivé
+du BootDrive de Kevin Osborn 
 
-Le_programme_qui_est_dans_l'Atmega368p_est_un_dérivé
-du_BootDrive_de_Kevin_Osborn_
+Ce projet est en collaboration avec vinvin-win et SL-prog 
 
-Ce_projet_est_en_collaboration_avec_vinvin-win_et_SL-prog_
+/!\ Les License /!\
+                   
 
-/!\_Les_License_/!\
-___________________
+Notre projet utilise d'autres projets qui possède une licence "GNU GENERAL PUBLIC LICENSE" que ne nous appartienne pas (vinvin-win, SL-prog).
 
-Notre_projet_utilise_d'autres_projets_qui_possède_une_licence_"GNU_GENERAL_PUBLIC_LICENSE"_que_ne_nous_appartienne_pas_(vinvin-win,_SL-prog).
+Notre projet est en libre service utilisant la licence "GNU GENERAL PUBLIC LICENSE". 
 
-Notre_projet_est_en_libre_service_utilisant_la_licence_"GNU_GENERAL_PUBLIC_LICENSE"._
-
-___________________
+                   
