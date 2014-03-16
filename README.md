@@ -1,22 +1,48 @@
-La Game-Wood est une console portable Open-Source 
+Game-Wood - Open Source - 2014
+=========
 
-C'est un projet qui a pour but de faire naître une nouvelle
-aire dans le monde du jeux vidéo rétro 
-Une aire où les jeux sont programmer par les joueurs 
+La Game Wood est une console qui se veut peu ch�re, facile �fabriquer et programmable facilement.
+C'est un projet qui a pour but de faire naître une nouvelle ère dans le monde du jeux vidéo rétros.
+Une ère où les jeux sont programmés par les joueurs.
 
-Cette premier version de la Game-Wood est basé sur un Atmega2560,
-qui exécute un programme est programmé par un Atmega368p 
+=========
 
-Le programme qui est dans l'Atmega368p est un dérivé
-du BootDrive de Kevin Osborn 
 
-Ce projet est en collaboration avec vinvin-win et SL-prog 
+[vinvin-win](https://github.com/vinvin-win) en collaboration avec [SL-prog](https://github.com/SL-prog), le projet Game Wood est [Open Source](http://fr.wikipedia.org/wiki/Open_source).
 
-/!\ Les License /!\
-                   
 
-Notre projet utilise d'autres projets qui possède une licence "GNU GENERAL PUBLIC LICENSE" que ne nous appartienne pas (vinvin-win, SL-prog).
+=========
 
-Notre projet est en libre service utilisant la licence "GNU GENERAL PUBLIC LICENSE". 
 
-                   
+La Game Wood est bas�e sur deux microcontr�leurs : l'Atmega328 et l'Atmega2560 de chez [Atmel](http://www.atmel.com/).
+
+Les programmes sont d�velopp�s sur [l'IDE Arduino](http://www.arduino.cc/fr/).
+
+
+=========
+
+
+Projet commenc� le 01/03/2014
+
+
+=========
+
+*IMPORTANT !*
+
+Ce projet utilise d'autres projets sous la licence " GNU GENERAL PUBLIC LICENSE " qui n'appartiennent ni � [vinvin-win](https://github.com/vinvin-win) ni � [SL-prog](https://github.com/SL-prog).
+
+Ce projet est lui-m�me distribu� sous la licence " GNU GENERAL PUBLIC LICENSE " conform�ment aux clauses de la licence.
+
+---
+
+Les projets utilis�s sont :
+
+- Les projet de l'IDE Arduino :
+lien du [projet GitHub d'Arduino](https://github.com/arduino/Arduino/)
+lien du [site Internet officiel d'Arduino](http://arduino.cc/)
+la licence du logiciel Arduino est pr�sente dans le dossier " IDE Game Wood " du projet Game Wood.
+
+L'IDE Game Wood est en fait une modification de l'IDE Arduino. Nous n'avons aucun lien avec les concepteurs d'Arduino.
+
+
+---
