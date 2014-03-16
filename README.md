@@ -31,7 +31,7 @@ Projet commencé le 01/03/2014
 
 Ce projet utilise d'autres projets sous la licence " GNU GENERAL PUBLIC LICENSE " qui n'appartiennent ni à [vinvin-win](https://github.com/vinvin-win) ni à [SL-prog](https://github.com/SL-prog).
 
-Ce projet est lui-même distribué sous la licence " GNU GENERAL PUBLIC LICENSE " conform�ment aux clauses de la licence.
+Ce projet est lui-même distribué sous la licence " GNU GENERAL PUBLIC LICENSE " conformément aux clauses de la licence.
 
 ---
 
