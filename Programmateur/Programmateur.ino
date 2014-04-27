@@ -1,25 +1,27 @@
+ /* Lire .hex de carte SD / micro-SD pout programmer
+ * une autre Arduino via communication I2SD.
+ * Cré à partir du code source de avrdude (licence GPL)
+ * Copyright (C) 2002-2004 Brian S. Dean <bsd@bsdhome.com>
+ * Copyright (C) 2008 Joerg Wunsch
+ * Crée le 26.12.2011 Kevin Osborn
+ */
+
 #include <SoftwareSerial.h>
 #include "stk500.h"
 #include <SD.h>
 #include <SPI.h>
-#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_GFX.h>  
 #include <Adafruit_ST7735.h>
-/* Read hex file from sd/micro-sd card and program
- *  another arduino via ttl serial.
- * borrows heavily from avrdude source code (GPL license)
- *   Copyright (C) 2002-2004 Brian S. Dean <bsd@bsdhome.com>
- *   Copyright (C) 2008 Joerg Wunsch
- *  Created 12/26/2011 Kevin Osborn
- */
+
  
- #if defined(__SAM3X8E__)
+#if defined(__SAM3X8E__)
     #undef __FlashStringHelper::F(string_literal)
     #define F(string_literal) string_literal
 #endif
 
 #define BOOT_BAUD 115200
 #define DEBUG_BAUD 19200
-// different pins will be needed for I2SD, as 2/3 are leds
+
 #define txPin 4
 #define rxPin 5
 #define rstPin 6
@@ -29,29 +31,21 @@
 #define TFT_DC   9 
 #define TFT_RST  8 
 
-//indicator LEDs on I2SD
-#define LED1 2
+
+#define LED1 2   // Activité de la communication I2SD
 #define LED2 3
 SoftwareSerial sSerial= SoftwareSerial(rxPin,txPin);
 // set up variables using the SD utility library functions:
 SdFile root;
-File myFile;
+File Fichierprog;
 avrmem mybuf;
 unsigned char mempage[128];
 
-//chipselect for the wyolum i2sd is 10
+// Pin CS utilisé
 const int chipSelect = 7;  
-// STANDALONE_DEBUG sends error messages out the main 
-// serial port. Not useful after you are actually trying to slave
-// another arduino
-//#define STANDALONE_DEBUG
-#ifdef STANDALONE_DEBUG
-#define DEBUGPLN Serial.println
-#define DEBUGP Serial.print
-#else
+
 #define DEBUGPLN sSerial.println
 #define DEBUGP sSerial.print
-#endif
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -60,51 +54,47 @@ int lastchargement = 0;
 float taillefichier = 0.0;
 float progression = 0.00;
 
-/*int freeRam () {
+/*int freeRam () {     // Ram libre sur l'arduino
   extern int __heap_start, *__brkval; 
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }*/
 
-void setup() {
+void setup() 
+{
+  
   digitalWrite(LED1,HIGH);
-  //initialize serial port. Note that it's a good idea 
-  // to use the softserial library here, so you can do debugging 
-  // on USB. 
   
   tft.initR(INITR_BLACKTAB);
   
   mybuf.buf = &mempage[0];
   sSerial.begin(DEBUG_BAUD);
-  // and the regular serial port for error messages, etc.
+
   Serial.begin(BOOT_BAUD);
   pinMode(rxPin, INPUT);
   pinMode(txPin, OUTPUT);
   pinMode(rstPin,OUTPUT);
   pinMode(chipSelect,OUTPUT);
   pinMode(LED1,OUTPUT);
-    // see if the card is present and can be initialized:
-  if (!SD.begin(chipSelect)) {
+    // Vérification de la présence de la carte SD
+  if (!SD.begin(chipSelect)) 
+  {
     DEBUGPLN("Card failed, or not present");
-    // don't do anything more:
     return;
   }
    
-   
-  DEBUGPLN("card initialized.");
+  DEBUGPLN("Carte initialisée");
   
   tft.setRotation(3);
   tft.fillScreen(ST7735_BLACK);
 
-  
   tft.setCursor(0, 0);
   tft.setTextColor(ST7735_WHITE,ST7735_BLACK);
   tft.setTextWrap(true);
 
-
   blinky(2,200);
   delay(100);
-  programArduino("program3.hex");
+  programArduino("program3.hex");  // Programme qui sera envoyé à l'Arduino esclave
   
   tft.println("=> Programation terminee");
   
@@ -119,8 +109,8 @@ void loop() {
   tft.setTextWrap(true);
   tft.println("La programation terminee");
   
-  //DEBUGP(F("Free Ram: "));
- // DEBUGPLN(freeRam());
+ //DEBUGP(F("Free Ram: "));   // Afficher la rame libre
+ //DEBUGPLN(freeRam());
   
   tft.fillScreen(ST7735_BLACK);
   
@@ -252,9 +242,9 @@ void programArduino(char * filename){
   DEBUGP("software Minor: ");
   DEBUGPLN(minor);
 if (SD.exists(filename)){
-    myFile = SD.open(filename, FILE_READ);
+    Fichierprog = SD.open(filename, FILE_READ);
     
-    taillefichier = myFile.size();
+    taillefichier = Fichierprog.size();
     
   }
   else{
@@ -268,7 +258,7 @@ if (SD.exists(filename)){
   
   stk500_program_enable();
 
-  while (readPage(myFile,&mybuf) > 0){
+  while (readPage(Fichierprog,&mybuf) > 0){
     stk500_loadaddr(mybuf.pageaddress>>1);
     stk500_paged_write(&mybuf, mybuf.size, mybuf.size);
   }
@@ -284,7 +274,7 @@ if (SD.exists(filename)){
   stk500_disable();
   delay(10);
   toggle_Reset();
-  myFile.close();
+  Fichierprog.close();
   blinky(4,500);
   
   
