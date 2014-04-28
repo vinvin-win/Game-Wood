@@ -1,5 +1,5 @@
- /* Lire .hex de carte SD / micro-SD pout programmer
- * une autre Arduino via communication I2SD.
+ /* Lire .hex de carte SD / micro-SD et programme
+ * Un autre Arduino via TTL.
  * Cré à partir du code source de avrdude (licence GPL)
  * Copyright (C) 2002-2004 Brian S. Dean <bsd@bsdhome.com>
  * Copyright (C) 2008 Joerg Wunsch
@@ -52,13 +52,15 @@ Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 int chargement = 0;
 int lastchargement = 0;
 float taillefichier = 0.0;
-float progression = 0.00;
+float progression = 0.0;
 
-/*int freeRam () {     // Ram libre sur l'arduino
+File Dossierprog;
+
+  int freeRam () {     // Ram libre sur l'arduino
   extern int __heap_start, *__brkval; 
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
-}*/
+}
 
 void setup() 
 {
@@ -79,44 +81,154 @@ void setup()
     // Vérification de la présence de la carte SD
   if (!SD.begin(chipSelect)) 
   {
-    DEBUGPLN("Card failed, or not present");
+    DEBUGPLN(F("Card failed, or not present"));
     return;
   }
    
-  DEBUGPLN("Carte initialisée");
+  Serial.println(F("Carte initialisee"));
   
-  tft.setRotation(3);
+  tft.setRotation(3);   // X = 160  Y = 128
   tft.fillScreen(ST7735_BLACK);
 
-  tft.setCursor(0, 0);
-  tft.setTextColor(ST7735_WHITE,ST7735_BLACK);
-  tft.setTextWrap(true);
 
-  blinky(2,200);
-  delay(100);
-  programArduino("program3.hex");  // Programme qui sera envoyé à l'Arduino esclave
-  
-  tft.println("=> Programation terminee");
-  
-  delay(1000);
+
 
 }
 
 void loop() {
   
+  Dossierprog = SD.open("/jeux/");
+  Afficherfichier(Dossierprog); 
+  Dossierprog.close();
+  
+  
   tft.setCursor(0, 0);
   tft.setTextColor(ST7735_WHITE,ST7735_BLACK);
   tft.setTextWrap(true);
-  tft.println("La programation terminee");
   
  //DEBUGP(F("Free Ram: "));   // Afficher la rame libre
  //DEBUGPLN(freeRam());
   
   tft.fillScreen(ST7735_BLACK);
   
-  
-  
 }
+
+
+
+
+
+void Afficherfichier(File dir) 
+{ 
+ uint8_t c;
+
+ while(true)
+ { 
+
+ File Fichier = dir.openNextFile(); 
+
+ Serial.println(freeRam()); 
+ 
+    if (!Fichier) 
+    { 
+     // Retourner au premier fichier du répertoire
+    dir.rewindDirectory();  
+    }  
+    /*
+    for ( uint8_t i = 0 ; i < numTabs ; i ++ ) { 
+    Serial . print ( ' \t ' ) ; 
+   } 
+    */
+    
+  /*
+   if (Fichier.isDirectory()) 
+   {  
+   tft.setCursor(0, 5); 
+   tft.setTextColor(ST7735_BLUE, ST7735_WHITE);  
+   tft.setTextSize(1);
+   tft.print ("Ouverture du Dossier:") ; 
+   tft.print ( "/" ) ; 
+   tft.print (Fichier.name()) ;
+   Afficherfichier(Fichier) ; 
+   } else { 
+   // Fichier a un poid, un dossier non
+   tft.setCursor(0, 5);
+   tft.setTextColor(ST7735_BLUE, ST7735_WHITE);  
+   tft.setTextSize(1);
+   tft.print ( " \t \t " ) ; 
+   tft.println (Fichier.size(), DEC ) ; 
+  }*/
+  
+   tft.fillScreen(ST7735_BLACK); 
+   tft.setCursor(40, 54);
+   tft.setTextColor(ST7735_RED, ST7735_WHITE);  
+   tft.setTextSize(1);
+   tft.println (Fichier.name());
+   //Serial.println(Fichier.name());
+  
+   tft.setCursor(60, 70);
+   tft.setTextColor(ST7735_BLUE, ST7735_WHITE);  
+   tft.setTextSize(1);
+   tft.println (Fichier.size(), DEC);
+   Serial.println(Fichier.size(), DEC); 
+ 
+   tft.setCursor(1, 90);
+   tft.setTextColor(ST7735_BLUE, ST7735_WHITE);  
+   tft.setTextSize(1);
+   tft.println (F("=> S pour suivant"));
+   tft.println (F("=> P pour precedent"));
+   tft.println (F("=> E pour ouvrire"));
+
+    while(!Serial.available());
+    
+    c = Serial.read();
+    
+      switch(c) 
+      {
+         case 's':
+           tft.setCursor(90, 5);
+           tft.println(F("Jeux suivant"));
+           Fichier.close();
+           break;
+           
+           
+         case 'p':
+           tft.setCursor(10, 5);
+           tft.println(F("Jeux précédent"));
+           break;
+           
+         case 'e':
+           tft.setCursor(50, 30);
+           tft.println(F("Lancement du jeux"));
+           blinky(2,200);
+           delay(100);
+           programArduino(strcat("/jeux/", Fichier.name()) );  // Programme qui sera envoyé à l'Arduino esclavev strcat(imagechar, entry.name())
+           Fichier.close();
+           break;
+           break;   
+        }
+             
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Line Buffer is set up in global SRAM
 #define LINELENGTH 50
@@ -168,14 +280,14 @@ int readIntelHexLine(File input, int *address, unsigned char *buf){
              
       tft.setCursor(10, 32);
       tft.print(progression);
-      tft.println(" %");
+      tft.println(F(" %   "));
 
       }
       
       if ((chargement == taillefichier) || ((chargement + 70) > taillefichier))  // Ne fonctionne pas /!\
       {
-      tft.setCursor(10, 16);
-      tft.println("100 %");
+      tft.setCursor(10, 32);
+      tft.println(F("100 %   "));
       }
       
       c = input.read();
@@ -221,10 +333,16 @@ return result;
 }
 
 // Right now there is only one file.
-void programArduino(char * filename){
+void programArduino(char * filename)
+{
   
-  tft.println("=> Programation commencer");
-  tft.println("=>Chargement de :");
+  tft.fillScreen(ST7735_BLACK);
+  tft.setCursor(0, 0);
+  tft.setTextColor(ST7735_WHITE,ST7735_BLACK);
+  tft.setTextWrap(true);
+  
+  tft.println(F("=> Programation commencer"));
+  tft.println(F("=>Chargement de :"));
   tft.println(filename);
   
   digitalWrite(rstPin,HIGH);
@@ -236,10 +354,10 @@ void programArduino(char * filename){
    delay(10);
    stk500_getsync();
    stk500_getparm(Parm_STK_SW_MAJOR, &major);
-  DEBUGP("software major: ");
+  DEBUGP(F("software major: "));
   DEBUGPLN(major);
   stk500_getparm(Parm_STK_SW_MINOR, &minor);
-  DEBUGP("software Minor: ");
+  DEBUGP(F("software Minor: "));
   DEBUGPLN(minor);
 if (SD.exists(filename)){
     Fichierprog = SD.open(filename, FILE_READ);
@@ -249,12 +367,12 @@ if (SD.exists(filename)){
   }
   else{
     DEBUGP(filename);
-    DEBUGPLN(" doesn't exist");
+    DEBUGPLN(F(" doesn't exist"));
     return;
   }
   //enter program mode
   
-  tft.println("=> Envoie programme");
+  tft.println(F("=> Envoie programme"));
   
   stk500_program_enable();
 
@@ -265,7 +383,7 @@ if (SD.exists(filename)){
 
   // could verify programming by reading back pages and comparing but for now, close out
   
-  tft.println("=> Verification programme");
+  tft.println(F("=> Verification programme"));
   
   chargement = 0;
   lastchargement = 0;
@@ -277,7 +395,8 @@ if (SD.exists(filename)){
   Fichierprog.close();
   blinky(4,500);
   
-  
+  tft.println(F("=> Programation terminee"));
+   
 }
 void blinky(int times, long delaytime){
   for (int i = 0 ; i < times; i++){
@@ -315,7 +434,7 @@ int stk500_drain()
 {
   while (Serial.available()> 0)
   {  
-    DEBUGP("draining: ");
+    DEBUGP(F("draining: "));
     DEBUGPLN(Serial.read(),HEX);
   }
   return 1;
@@ -413,7 +532,7 @@ static int arduino_read_sig_bytes(AVRMEM * m)
   /* Signature byte reads are always 3 bytes. */
 
   if (m->size < 3) {
-    DEBUGPLN("memsize too small for sig byte read");
+    DEBUGPLN(F("memsize too small for sig byte read"));
     return -1;
   }
 
@@ -724,15 +843,15 @@ static void stk500_disable()
 }
 //original avrdude error messages get copied to ram and overflow, wo use numeric codes.
 void error1(int errno,unsigned char detail){
-  DEBUGP("error: ");
+  DEBUGP(F("error: "));
   DEBUGP(errno);
-  DEBUGP(" detail: 0x");
+  DEBUGP(F(" detail: 0x"));
   DEBUGPLN(detail,HEX);
 }
 
 
 void error(int errno){
-  DEBUGP("error" );
+  DEBUGP(F("error" ));
   DEBUGPLN(errno);
 }
 void dumphex(unsigned char *buf,int len)
