@@ -1,0 +1,20 @@
+# Writing all output to: C:\Users\Vincent\Documents\ISIS 8\Gamme Wood\Game_Wood_v1.log
+set pad_wire_necking on
+bus diagonal
+fanout 5
+route 10
+clean 2
+route 10 16
+clean 2
+route 10 16
+clean 2
+route 10 16
+clean 2
+route 10 16
+clean 2
+route 10 16
+clean 2
+filter 5
+recorner diagonal
+status_file
+
